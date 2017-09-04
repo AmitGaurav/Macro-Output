@@ -1,0 +1,58 @@
+Private Sub Document_Open()
+    Dim objDocA As Word.Document
+    Dim objDocB As Word.Document
+    'Dim objDocD As Word.Document
+    Dim objWord As Object
+    Dim Filepath As String
+    Dim Counter As Integer
+    Dim SplitCatcher As Variant
+    Dim clubbedFileName As String, baseFileName As String, revisedFileName As String
+
+    'MsgBox ("File Name" & ActiveDocument.Name)
+    clubbedFileName = ActiveDocument.Name
+
+    SplitCatcher = Split(clubbedFileName, "_")
+    
+    For Counter = 0 To UBound(SplitCatcher)
+        If Counter = 0 Then
+            'MsgBox SplitCatcher(Counter)
+            baseFileName = SplitCatcher(Counter)
+        End If
+        
+        If Counter = 1 Then
+            'MsgBox SplitCatcher(Counter)
+            revisedFileName = SplitCatcher(Counter)
+        End If
+    Next
+ 
+    Set objDocA = Documents.Open("http://Fin-app-003-D:8080/Macro-Output-DL/DocDownloadServlet?requestId=" & baseFileName)
+    Set objDocB = Documents.Open("http://Fin-app-003-D:8080/Macro-Output-DL/DocDownloadServlet?requestId=" & revisedFileName)
+
+    Filepath = ActiveDocument.Path
+        Application.CompareDocuments _
+            OriginalDocument:=objDocA, _
+            RevisedDocument:=objDocB, _
+            Destination:=wdCompareDestinationNew
+
+        'Set objDocD = ActiveDocument
+        'objDocD.SaveAs FileName:=Filepath & "\output.docx"
+        'objDocD.Close SaveChanges:=True
+        objDocA.Close
+        objDocB.Close
+        Set objDocA = Nothing
+        Set objDocB = Nothing
+        ActiveDocument.Close
+     'Do
+     '   On Error Resume Next
+     '   Set objWord = GetObject(, "Word.Application")
+     '   If Not objWord Is Nothing Then
+     '       objWord.Quit
+     '       Set objWord = Nothing
+     '   End If
+    'Loop Until objWord Is Nothing
+End Sub
+
+
+
+
+
